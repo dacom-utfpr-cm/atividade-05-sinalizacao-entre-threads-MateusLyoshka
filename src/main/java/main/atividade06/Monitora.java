@@ -9,23 +9,50 @@ package main.atividade06;
  * @author a2515695
  */
 public class Monitora {
-    Monitora MonitorObject = new Monitora();
     
+    Object myMonitorObject = new Object();
     boolean wasSignalled = false;
+    int random;
+    int count;
     
-    public void Wait(){
-        synchronized(MonitorObject){
-            while(!wasSignalled){
-                try{
-                    MonitorObject.Wait();
-                }catch(InterruptedException e){
-                    System.out.println("Interrupção! "+e.getMessage());
-                }
-                
-            }
+    public synchronized int GetNumber(){
+        return random;
     }
     
-    public void Notify(){
+    public synchronized void SetNumber(int random){
+        this.random = random;
+    }
     
+    public void NumbersToProcess(int count){
+        this.count = count;
+    }
+    
+    public synchronized void setCount(int count) {
+        this.count = count;
+    }
+    
+    public boolean hasNumbersToProcess() {
+        return count > 0;
+    }
+    
+    public void Wait() {
+        synchronized (myMonitorObject) {
+            while (!wasSignalled) {
+                try {
+                    myMonitorObject.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        wasSignalled = false;
+        }
+    }
+    
+    public void Notify() {
+        synchronized (myMonitorObject) {
+            wasSignalled = true;
+            count--;
+            myMonitorObject.notify();
+        }
     }
 }
